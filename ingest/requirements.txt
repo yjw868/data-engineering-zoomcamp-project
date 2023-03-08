@@ -1,0 +1,7 @@
+stomp.py==8.1.0
+confluent_kafka==2.0.2
+pytz==2022.7.1
+toml==0.10.2
+kafka-python==2.0.2
+python-schema-registry-client==2.4.1
+# requests==2.28.2

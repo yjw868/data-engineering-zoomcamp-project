@@ -1,0 +1,111 @@
+# https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/3e7dfb6857db2dda857199d4e3107e12f2893473/week_6_stream_processing/python/docker/kafka/docker-compose.yml
+version: '3.6'
+
+services:
+  datafeeder:
+    build:
+      context: .
+      dockerfile: docker/datafeeder_docker
+    container_name: datafeeder
+    depends_on:
+      - kafka
+      - zookeeper
+      - schema-registry
+    tty: true
+    environment:
+      # KAFKA_SCHEMA_REGISTRY_URL: "schema-registry:8081"
+      KAFKA_BOOSTRAP_SERVER_NAME: kafka
+      KAFKA_BOOSTRAP_SERVER_PORT: 9092
+      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      # SCHEMA_REGISTRY_SERVER: schema-registry
+      SCHEMA_REGISTRY_SERVER_PORT: 8081
+    volumes:
+      - ./ingest:/opt/datafeeder/
+      - ./data/tmp:/tmp/
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      # - "${DOCKER_HOST_IP}:8084:80"
+      # - "${DOCKER_HOST_IP}:8000:8000"
+      - "127.0.0.1:8084:80"
+      - "127.0.0.1:8000:8000"
+    # networks:
+    #   - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  zookeeper:
+    image: docker.io/bitnami/zookeeper:3.8
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - "./data/zookeeper_data:/bitnami"
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      # - ZOOKEEPER_CLIENT_PORT=2181
+    # networks:
+    #   - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  kafka:
+    image: docker.io/bitnami/kafka:3.4
+    container_name: kafka
+    # user: root:root
+    ports:
+      - "9092:9092"
+      - "29094:29092"
+    volumes:
+      # - "./data/kafka_data:/bitnami/kafka"
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT 
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_SCHEMA_REGISTRY_URL: "schema-registry:8081"
+    depends_on:
+      - zookeeper
+    restart: always
+    # networks:
+    #   - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:3.3.0
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+      - zookeeper
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      # SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
+      # SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,OPTIONS'
+      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
