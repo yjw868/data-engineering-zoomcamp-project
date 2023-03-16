@@ -127,7 +127,7 @@ class DataFeeder:
 
         while True:
             try:
-                sleep(1)
+                sleep(10)
             except KeyboardInterrupt:
                 print(
                     "Quit saving data to table and disable the connection with data feed!"

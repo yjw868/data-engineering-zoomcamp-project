@@ -204,3 +204,7 @@ data/kafka_data/*
 # Include metabase data
 ingest/consumer.py
 docker-compose.yml
+terraform_gcp/terraform.tfstate*
+.terraform.lock.hcl
+terraform_gcp/.terraform/*
+
