@@ -1,6 +1,5 @@
 # https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/3e7dfb6857db2dda857199d4e3107e12f2893473/week_6_stream_processing/python/docker/kafka/docker-compose.yml
 version: '3.6'
-
 x-build:
   &default-build
   context: .
@@ -44,7 +43,7 @@ services:
     depends_on:
       - orion
       - zookeeper
-      - kafka
+      - broker
     environment:
       <<: *default-app-vars
       PREFECT_API_URL: http://host.docker.internal:4200/api
@@ -89,7 +88,7 @@ services:
       dockerfile: docker/datafeeder_docker
     container_name: datafeeder
     depends_on:
-      - kafka
+      - broker
       - zookeeper
       - schema-registry
     tty: true
@@ -112,78 +111,136 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   zookeeper:
-    image: docker.io/bitnami/zookeeper:3.8
+    image: confluentinc/cp-zookeeper:7.2.0
+    hostname: zookeeper
     container_name: zookeeper
     ports:
       - "2181:2181"
     volumes:
-      - "./data/zookeeper_data:/bitnami"
+      - "./data/zookeeper_data:/var/lib/zookeeper/data"
+      - "./data/zookeeper_log:/var/lib/zookeeper/log"
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - ALLOW_ANONYMOUS_LOGIN=yes
-      # - ZOOKEEPER_CLIENT_PORT=2181
+       ALLOW_ANONYMOUS_LOGIN: yes
+       ZOOKEEPER_CLIENT_PORT: 2181
+       ZOOKEEPER_TICK_TIME: 2000
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  kafka:
-    image: docker.io/bitnami/kafka:3.4
-    container_name: kafka
+  broker:
+    image: confluentinc/cp-kafka:7.2.0
+    hostname: broker
+    container_name: broker
     ports:
       - "9092:9092"
       - "29094:29092"
     volumes:
-      - "./data/kafka_data:/bitnami/kafka"
+      - "./data/kafka_data:/var/lib/kafka/data"
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
-      ALLOW_PLAINTEXT_LISTENER: yes
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,LISTENER_DOCKER_EXTERNAL:PLAINTEXT 
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT #,LISTENER_DOCKER_EXTERNAL:PLAINTEXT 
+      KAFKA_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://host.docker.internal:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_SCHEMA_REGISTRY_URL: "schema-registry:8081"
     depends_on:
       - zookeeper
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - "8080:8080"
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-    extra_hosts:
-      - "host.docker.internal:host-gateway" 
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui
+  #   container_name: kafka-ui
+  #   ports:
+  #     - "8080:8080"
+  #   restart: always
+  #   environment:
+  #     - KAFKA_CLUSTERS_0_NAME=local
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+  #   extra_hosts:
+  #     - "host.docker.internal:host-gateway" 
 
   schema-registry:
-    # image: confluentinc/cp-schema-registry:3.3.0
-    image: bitnami/schema-registry:7.0.8
+    image: confluentinc/cp-schema-registry:7.2.0
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
       - zookeeper
-      - kafka
+      - broker
     ports:
       - "8081:8081"
     environment:
-      SCHEMA_REGISTRY_KAFKA_BROKERS: PLAINTEXT://kafka:29092
-      # SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      # SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
-      # SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,OPTIONS'
-      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+      # SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: "zookeeper:2181" #(depreciated)
+      SCHEMA_REGISTRY_KAFKA_BROKERS: PLAINTEXT://broker:29092
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "broker:29092"
+      SCHEMA_REGISTRY_HOST_NAME: "schema-registry"
+      SCHEMA_REGISTRY_LISTENERS: "http://schema-registry:8081" #(default: http://0.0.0.0:8081)
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
       SCHEMA_REGISTRY_DEBUG: true
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+    restart: on-failure
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
+      - "host.docker.internal:host-gateway"
+  control-center:
+    image: confluentinc/cp-enterprise-control-center:7.2.0
+    hostname: control-center
+    container_name: control-center
+    depends_on:
+      - zookeeper
+      - broker
+      - schema-registry
+    ports:
+      - "9021:9021"
+    environment:
+      CONTROL_CENTER_BOOTSTRAP_SERVERS: 'broker:29092'
+      CONTROL_CENTER_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      CONTROL_CENTER_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+      CONTROL_CENTER_REPLICATION_FACTOR: 1
+      CONTROL_CENTER_INTERNAL_TOPICS_PARTITIONS: 1
+      CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
+      CONFLUENT_METRICS_TOPIC_REPLICATION: 1
+      PORT: 9021
+
+  kafka-rest:
+    image: confluentinc/cp-kafka-rest:7.2.0
+    hostname: kafka-rest
+    container_name: kafka-rest
+    ports:
+      - "8082:8082"
+    depends_on:
+      - schema-registry
+      - broker
+    environment:
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
+      KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://localhost:8081'
+      KAFKA_REST_HOST_NAME: localhost
+      KAFKA_REST_LISTENERS: 'http://0.0.0.0:8082'
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+  # cli:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: cli
+  #   # depends_on:
+  #   #   - kafka
+  #   #   - zookeeper
+  #   #   - schema-registry
+  #   tty: true
+  #   environment:
+  #     # KAFKA_SCHEMA_REGISTRY_URL: "schema-registry:8081"
+  #     KAFKA_BOOSTRAP_SERVER_NAME: kafka
+  #     KAFKA_BOOSTRAP_SERVER_PORT: 9092
+  #     SCHEMA_REGISTRY_URL: http://schema-registry:8081
+  #     # SCHEMA_REGISTRY_SERVER: schema-registry
+  #     SCHEMA_REGISTRY_SERVER_PORT: 8081
+  #   volumes:
+  #     - ./homework:/opt/cli/
+  #     - ./resources:/opt/resources
+  #     # - ./data/tmp:/tmp/
+  #     - /var/run/docker.sock:/var/run/docker.sock 

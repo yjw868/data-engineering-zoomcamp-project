@@ -192,7 +192,9 @@ poetry.toml
 # End of https://www.toptal.com/developers/gitignore/api/python,visualstudiocode
 secrets.toml
 /data/kafka_data/data/*
+data/kafka_data/*
 /data/zookeeper_data/*
+/data/zookeeper_log/*
 /data/tmp/*
 /data/db_data/*
 /data/prefect_data/*
@@ -201,3 +203,4 @@ secrets.toml
 # *.csv.gz
 # Include metabase data
 ingest/consumer.py
+docker-compose.yml
