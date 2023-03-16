@@ -194,7 +194,10 @@ secrets.toml
 /data/kafka_data/data/*
 /data/zookeeper_data/*
 /data/tmp/*
+/data/db_data/*
+/data/prefect_data/*
+/data/pgadmin_data/*
 # *.csv
 # *.csv.gz
-
 # Include metabase data
+ingest/consumer.py

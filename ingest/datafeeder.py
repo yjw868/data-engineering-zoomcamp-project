@@ -28,12 +28,16 @@ MESSAGES = {
 HOSTNAME = "datafeeds.networkrail.co.uk"
 
 
-topic = "public.networkrail.movement"
-conf = {
+def create_producer():
+    topic = "public.networkrail.movement"
+    conf = {
     "bootstrap.servers": "host.docker.internal:9092",
     "client.id": socket.gethostname(),
 }
-producer = Producer(conf)
+    producer = Producer(conf)
+    return producer
+
+producer = create_producer()
 
 
 class MVListener(stomp.ConnectionListener):
@@ -79,8 +83,8 @@ class MVListener(stomp.ConnectionListener):
         self.msg.ack(id=headers["message-id"], subscription=headers["subscription"])
 
         if self.streaming:
-            print(message_raw)
-            self.sender.produce(self.topic, message_raw)
+            print(frame)
+            self.sender.produce(self.topic, json.dumps(json.loads(message_raw)))
         else:
             self.print_message(message_raw)
 
