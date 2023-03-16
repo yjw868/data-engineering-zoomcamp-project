@@ -5,6 +5,9 @@ from schema_registry.client import SchemaRegistryClient, schema
 client = SchemaRegistryClient(url='http://host.docker.internal:8081')
 # client.update_compatibility(level="NONE", subject="TRAIN_MVT_ALL_TOC")
 print(client.get_subjects())
+my_schema = client.get_schema(subject='TRAIN_MVT_ALL_TOC', version='latest')
+print(my_schema)
+
 deployment_schema = {
     "type": "record",
     "namespace": "dtc-project",
@@ -130,4 +133,4 @@ deployment_schema = {
 }
 
 avro_schema = schema.AvroSchema(deployment_schema)
-schema_id = client.register("test-deployment", avro_schema)
+schema_id = client.register("value_TRAIN_MVT_ALL_TOC", avro_schema)

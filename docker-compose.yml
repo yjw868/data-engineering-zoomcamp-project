@@ -90,7 +90,8 @@ services:
       - "host.docker.internal:host-gateway" 
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:3.3.0
+    # image: confluentinc/cp-schema-registry:3.3.0
+    image: bitnami/schema-registry:7.0.8
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -99,12 +100,15 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
+      SCHEMA_REGISTRY_KAFKA_BROKERS: PLAINTEXT://kafka:29092
+      # SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:29092
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       # SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
       # SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,OPTIONS'
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
+      SCHEMA_REGISTRY_DEBUG: true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     extra_hosts:

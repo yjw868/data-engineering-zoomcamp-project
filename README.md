@@ -1,6 +1,11 @@
 
+Listing Topics
+```docker exec -it kafka /bin/bash
+/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server=kafka:9092 --list
 
-
+# Create a topic
+/opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --topic TRAIN_MVT_ALL_TOC --create --partitions 2 --replication-factor 1
+```
 
 
 
