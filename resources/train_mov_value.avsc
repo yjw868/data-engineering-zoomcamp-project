@@ -1,29 +1,236 @@
-"event_type": "DEPARTURE",
-    "gbtt_timestamp": "1678889580000",
-    "original_loc_stanox": "",
-    "planned_timestamp": "1678889610000",
-    "timetable_variation": "1",
-    "original_loc_timestamp": "",
-    "current_train_id": "",
-    "delay_monitoring_point": "false",
-    "next_report_run_time": "2",
-    "reporting_stanox": "00000",
-    "actual_timestamp": "1678889640000",
-    "correction_ind": "false",
-    "event_source": "AUTOMATIC",
-    "train_file_address": null,
-    "platform": " 1",
-    "division_code": "60",
-    "train_terminated": "false",
-    "train_id": "062R38MO15",
-    "offroute_ind": "false",
-    "variation_status": "LATE",
-    "train_service_code": "23563015",
-    "toc_id": "60",
-    "loc_stanox": "06347",
-    "auto_expected": "true",
-    "direction_ind": "UP",
-    "route": "2",
-    "planned_event_type": "DEPARTURE",
-    "next_report_stanox": "06350",
-    "line_ind": ""
+{
+  "fields": [
+    {
+      "default": null,
+      "name": "actual_timestamp",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "auto_expected",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "correction_ind",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "current_train_id",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "delay_monitoring_point",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "direction_ind",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "division_code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "event_source",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "event_type",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "gbtt_timestamp",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "line_ind",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "loc_stanox",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "next_report_run_time",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "next_report_stanox",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "offroute_ind",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "original_loc_stanox",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "original_loc_timestamp",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "planned_event_type",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "planned_timestamp",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "platform",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "reporting_stanox",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "route",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "timetable_variation",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "toc_id",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "train_file_address",
+      "type": "null"
+    },
+    {
+      "default": null,
+      "name": "train_id",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "train_service_code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "train_terminated",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "variation_status",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ],
+  "name": "value_TRAIN_MVT_ALL_TO",
+  "namespace": "TRAIN_MVT_ALL_TOC",
+  "type": "record"
+}
