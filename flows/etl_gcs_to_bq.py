@@ -12,7 +12,9 @@ def extrct_from_gcs():
     gcs_block = GcsBucket.load("dtc-de-project")
     with BytesIO() as buf:
         gcs_block.download_object_to_file_object(
-            "train_mov/20230322-001500-29.json", buf
+            # "train_mov/20230322-001500-29.json", buf
+            "train_mov/20230324-223900-84.json",
+            buf,
         )
         buf.seek(0)
 
