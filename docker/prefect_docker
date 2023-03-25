@@ -1,4 +1,4 @@
-FROM prefecthq/prefect:2.7.7-python3.9 as base
+FROM prefecthq/prefect:2.8.6-python3.9 as base
 
 FROM base as agent
 
