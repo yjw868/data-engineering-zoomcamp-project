@@ -27,7 +27,7 @@ def write_bq(df: pd.DataFrame) -> None:
     gcp_credentials_block = GcpCredentials.load("dtc-de-project-cred")
 
     df.to_gbq(
-        destination_table="trains.movements",
+        destination_table="train.movements",
         project_id="dtc-de-project-380810",
         credentials=gcp_credentials_block.get_credentials_from_service_account(),
         chunksize=500_000,
