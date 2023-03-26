@@ -222,25 +222,35 @@ services:
       KAFKA_REST_LISTENERS: 'http://0.0.0.0:8082'
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
-  # cli:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: cli
-  #   # depends_on:
-  #   #   - kafka
-  #   #   - zookeeper
-  #   #   - schema-registry
-  #   tty: true
-  #   environment:
-  #     # KAFKA_SCHEMA_REGISTRY_URL: "schema-registry:8081"
-  #     KAFKA_BOOSTRAP_SERVER_NAME: kafka
-  #     KAFKA_BOOSTRAP_SERVER_PORT: 9092
-  #     SCHEMA_REGISTRY_URL: http://schema-registry:8081
-  #     # SCHEMA_REGISTRY_SERVER: schema-registry
-  #     SCHEMA_REGISTRY_SERVER_PORT: 8081
-  #   volumes:
-  #     - ./homework:/opt/cli/
-  #     - ./resources:/opt/resources
-  #     # - ./data/tmp:/tmp/
-  #     - /var/run/docker.sock:/var/run/docker.sock 
+  dbt-bq-train:
+    build:
+      context: .
+      dockerfile: docker/dbt_docker
+      target: dbt-bigquery
+    container_name: dbt-bq-train
+    working_dir: /usr/app/dbt/
+    ports:
+      - "8092:8080"
+    tty: true
+    volumes:
+      - ./dbt-bq-train:/usr/app/dbt
+      - ./profile-yml/:/root/.dbt
+      - ~/.config/gcloud/dtc-de-project-380810-af97d0ef23ad.json:/.google/credentials/google_credentials.json
+  dataviz:
+    image: metabase/metabase
+    container_name: metabase
+    restart: always
+    environment:
+      - MB_DB_TYPE=postgres
+      - MB_DB_DBNAME=db
+      - MB_DB_PORT=5432
+      - MB_DB_USER=postgres
+      - MB_DB_PASS=admin
+      - MB_DB_HOST=pgdatabase
+      - MB_DB_FILE=/metabase-data/metabase.db
+    depends_on:
+      - pgdatabase
+    volumes:
+      - "./data/dataviz_data:/metabase-data"
+    ports:
+      - "3000:3000"
