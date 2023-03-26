@@ -208,3 +208,4 @@ terraform_gcp/terraform.tfstate*
 .terraform.lock.hcl
 terraform_gcp/.terraform/*
 
+data/ofelia_logs/

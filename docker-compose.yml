@@ -153,17 +153,7 @@ services:
     restart: always
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  # kafka-ui:
-  #   image: provectuslabs/kafka-ui
-  #   container_name: kafka-ui
-  #   ports:
-  #     - "8080:8080"
-  #   restart: always
-  #   environment:
-  #     - KAFKA_CLUSTERS_0_NAME=local
-  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-  #   extra_hosts:
-  #     - "host.docker.internal:host-gateway" 
+
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.2.0
@@ -244,13 +234,23 @@ services:
       - MB_DB_TYPE=postgres
       - MB_DB_DBNAME=db
       - MB_DB_PORT=5432
-      - MB_DB_USER=postgres
+      - MB_DB_USER=root
       - MB_DB_PASS=admin
       - MB_DB_HOST=pgdatabase
-      - MB_DB_FILE=/metabase-data/metabase.db
+      # - MB_DB_FILE=/metabase-data/metabase.db
     depends_on:
       - pgdatabase
     volumes:
       - "./data/dataviz_data:/metabase-data"
     ports:
       - "3000:3000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  ofelia_scheduler:
+    image: mcuadros/ofelia:latest
+    container_name: ofelia_sheduler
+    # restart: on-failure
+    command: daemon --config=/etc/ofelia.conf
+    volumes:
+      - ./scheduler.conf:/etc/ofelia.conf
+      - ./data/ofelia_logs/scheduler:/etc/logs
