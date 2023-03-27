@@ -7,7 +7,7 @@ with movdata as (
     select
         *,
         row_number() over(
-            partition by train_id, actual_timestamp
+            partition by location_id
         ) as rn
     from
         {{ source(
@@ -23,5 +23,5 @@ select
     *
 from
     movdata
-where
-    rn = 1 
+-- where
+--     rn = 1 
