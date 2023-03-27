@@ -218,7 +218,7 @@ services:
       dockerfile: docker/dbt_docker
       target: dbt-bigquery
     container_name: dbt-bq-train
-    working_dir: /usr/app/dbt/
+    working_dir: /usr/app/dbt/dtc_de_train
     ports:
       - "8092:8080"
     tty: true
@@ -254,3 +254,6 @@ services:
     volumes:
       - ./scheduler.conf:/etc/ofelia.conf
       - ./data/ofelia_logs/scheduler:/etc/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

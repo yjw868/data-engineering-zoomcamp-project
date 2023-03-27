@@ -29,13 +29,14 @@ HOSTNAME = "datafeeds.networkrail.co.uk"
 
 
 def create_producer():
-    topic = "public.networkrail.movement"
+    # topic = "public.networkrail.movement"
     conf = {
-    "bootstrap.servers": "host.docker.internal:9092",
-    "client.id": socket.gethostname(),
-}
+        "bootstrap.servers": "host.docker.internal:9092",
+        "client.id": socket.gethostname(),
+    }
     producer = Producer(conf)
     return producer
+
 
 producer = create_producer()
 
@@ -83,8 +84,10 @@ class MVListener(stomp.ConnectionListener):
         self.msg.ack(id=headers["message-id"], subscription=headers["subscription"])
 
         if self.streaming:
-            print(frame)
-            self.sender.produce(self.topic, json.dumps(json.loads(message_raw)))
+            # print(frame)
+            msg = json.loads(message_raw)
+            # print(msg)
+            self.sender.produce(self.topic, json.dumps(msg))
         else:
             self.print_message(message_raw)
 
@@ -146,6 +149,7 @@ if __name__ == "__main__":
         password=feed_password,
         listener=MVListener,
         streaming=True,
+        # streaming=False, # Use this option to preview data in the terminal
     )
 
     train_rdf.download_feed()
