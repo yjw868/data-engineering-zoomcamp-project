@@ -38,7 +38,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
     df_clean = df.astype(
         {
             "event_type": "string",
-            "gbtt_timestamp": "string",
+            "gbtt_timestamp": "Int64",
             "original_loc_stanox": "Int64",
             "planned_timestamp": "Int64",
             "timetable_variation": "Int64",
