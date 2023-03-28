@@ -39,7 +39,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
         {
             "event_type": "string",
             "gbtt_timestamp": "string",
-            "original_loc_stanox": "string",
+            "original_loc_stanox": "Int64",
             "planned_timestamp": "Int64",
             "timetable_variation": "Int64",
             "original_loc_timestamp": "string",

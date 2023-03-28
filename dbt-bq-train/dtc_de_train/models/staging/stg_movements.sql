@@ -7,7 +7,7 @@ with movdata as (
     select
         *,
         row_number() over(
-            partition by location_id
+            partition by  train_id, actual_timestamp
         ) as rn
     from
         {{ source(

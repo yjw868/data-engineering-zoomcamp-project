@@ -13,13 +13,14 @@ sources:
       # loaded_at_field: record_loaded_at
       tables:
         - name: movements
+        - name: rail_loc_code
 
          # freshness:
            # error_after: {count: 6, period: hour}
 
-# models:
-#     - name: stg_green_tripdata
-#       description: >
+models:
+    - name: stg_movements
+#       description: >÷
 #         Trip made by green taxis, also known as boro taxis and street-hail liveries.
 #         Green taxis may respond to street hails,but only in the areas indicated in green on the
 #         map (i.e. above W 110 St/E 96th St in Manhattan and in the boroughs).
@@ -87,3 +88,22 @@ sources:
 #                   values: "{{ var('payment_type_values') }}"
 #                   severity: warn
 #                   quote: false
+    - name: stg_rail_loc_code
+      description: >
+        Railway Location Codes
+      columns:
+        - name: CRS
+          description: >
+            Computer Reservation System, a 3 letter code allocated to most major 
+            junctions and railway stations in England Scotland and Wales.
+        - name: TIPLOC
+          description: >
+            Timing Point Location, essentially a shortened version of the location’s full name.
+            Rail Record live train times allows you to search by TIPLOC.TIPLOC names are restricted to 7 letters.
+        - name: STANOX 
+          description: >
+            STANOX are numbers allocated to various railway locations.
+        - name: TOPS
+          description: >
+            TOPS lists use another railway location name called STANME – you can search TOPS locations by clicking
+            TOPS Location Names from the Enthusiast Resources menu.

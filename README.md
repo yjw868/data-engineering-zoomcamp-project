@@ -1,4 +1,9 @@
 
+
+
+## Architecture diagram
+<img src="assets/dtc-de-project.png"/>
+
 Listing Topics
 ```docker exec -it kafka /bin/bash
 /opt/bitnami/kafka/bin/kafka-topics.sh --bootstrap-server=kafka:9092 --list
