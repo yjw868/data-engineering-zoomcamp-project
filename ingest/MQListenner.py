@@ -19,9 +19,10 @@ MESSAGES = {
 
 
 class MQListener(stomp.ConnectionListener):
-    def __init__(self, messager, topic, producer, streaming=False):
+    def __init__(self, messager, mv_subscribe_topic, topic, producer, streaming=False):
         self.msg = messager
-        self.topic = topic
+        self.producer_topic = topic
+        self.topic = mv_subscribe_topic
         self.producer = producer
         self.streaming = streaming
 
@@ -73,7 +74,7 @@ class MQListener(stomp.ConnectionListener):
                     # print(type(body))
                     train_records = self.producer.read_records([body])
                     self.producer.publish(
-                        topic="train_movements", records=train_records
+                        topic=self.producer_topic, records=train_records
                     )
         else:
             self.print_message(message_raw)

@@ -16,9 +16,12 @@ HOSTNAME = "datafeeds.networkrail.co.uk"
 class DataFeeder:
     """RailDataFeeder is a Python API to collect and save the real-time data from UK Network Rail Data Feed."""
 
-    def __init__(self, topic, username, password, listener, streaming=False):
+    def __init__(
+        self, mq_subscribe_topic, topic, username, password, listener, streaming=False
+    ):
         # self.table_name = db_name.split(".")[0]
         # self.db_name = db_name
+        self.mq_subscribe_topic = mq_subscribe_topic
         self.topic = topic
         self.username = username
         self.password = password
@@ -30,15 +33,20 @@ class DataFeeder:
         Internal function to connect data feed using stomp connection.
         """
         conn = stomp.Connection(host_and_ports=[(HOSTNAME, 61618)])
-        conn.set_listener("", self.listener(conn, self.topic, producer, self.streaming))
+        conn.set_listener(
+            "",
+            self.listener(
+                conn, self.mq_subscribe_topic, self.topic, producer, self.streaming
+            ),
+        )
         conn.connect(username=self.username, passcode=self.password)
 
         conn.subscribe(
             **{
-                "destination": f"/topic/{self.topic}",
+                "destination": f"/topic/{self.mq_subscribe_topic}",
                 "id": 1,
                 "ack": "client-individual",
-                "activemq.subscriptionName": self.topic,
+                "activemq.subscriptionName": self.mq_subscribe_topic,
             }
         )
         return conn
@@ -71,9 +79,10 @@ if __name__ == "__main__":
         "schema.value": "/opt/resources/train_mov_value.avsc",
     }
     producer = TrainAvroProducer(props=config)
-
+    print("Running streaming session now...")
     train_rdf = DataFeeder(
-        topic="TRAIN_MVT_ALL_TOC",
+        mq_subscribe_topic="TRAIN_MVT_ALL_TOC",
+        topic="train_movements",
         username=feed_username,
         password=feed_password,
         listener=MQListener,
