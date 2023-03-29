@@ -1,6 +1,10 @@
+import sys
+from pathlib import Path
 from time import sleep
-from typing import Dict
+from typing import Dict, List
 
+parent_directory = Path(__file__).resolve().parents[1]
+sys.path.append(str(parent_directory / "utilities"))
 from confluent_kafka import Producer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroSerializer

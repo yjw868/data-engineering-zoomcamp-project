@@ -105,6 +105,7 @@ services:
     volumes:
       - ./ingest:/opt/datafeeder/
       - ./resources:/opt/resources/
+      - ./utilities:/opt/utilities
       - ./data/tmp:/tmp/
       - /var/run/docker.sock:/var/run/docker.sock
     ports:

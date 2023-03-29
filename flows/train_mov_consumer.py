@@ -1,12 +1,10 @@
 import json
-import os
-import pathlib
 import sys
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
-parent_directory = pathlib.Path(__file__).resolve().parents[2]
+parent_directory = Path(__file__).resolve().parents[2]
 sys.path.append(str(parent_directory / "utilities"))
 from confluent_kafka import Consumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -63,6 +61,7 @@ class TrainAvroConsumer:
 
     def consume_from_kafka(self, topics: List[str]):
         self.consumer.subscribe(topics=topics)
+        results = []
         while True:
             try:
                 # SIGINT can't be handled when polling, limit timeout to 1 second.
@@ -78,12 +77,14 @@ class TrainAvroConsumer:
                 if record is not None:
                     print("{}, {}".format(key, record))
                     body = train_record_to_dict(record)
+                    results.append(body)
                     uk_datetime_str, toc_id = self.parse_msg(body)
                     self.write_local(loc, body, uk_datetime_str, toc_id)
             except KeyboardInterrupt:
                 break
 
         self.consumer.close()
+        return results
 
     def parse_msg(self, message):
         timestamp = int(message["actual_timestamp"]) / 1000
