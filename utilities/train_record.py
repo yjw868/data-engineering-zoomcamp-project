@@ -7,7 +7,7 @@ class TrainRecord:
         self.event_type = str(arr[0])
         self.gbtt_timestamp = int(arr[1] or 0)
         self.original_loc_stanox = int(arr[2] or 0)
-        self.planned_timestamp = int(arr[3])
+        self.planned_timestamp = int(arr[3] or 0)
         self.timetable_variation = int(arr[4])
         self.original_loc_timestamp = int(arr[5] or 0)
         self.current_train_id = str(arr[6])
@@ -82,5 +82,5 @@ def dict_to_train_record(obj, ctx):
     return TrainRecord.from_dict(obj)
 
 
-def train_record_to_dict(train_record: TrainRecord):
+def train_record_to_dict(train_record: TrainRecord, ctx=None):
     return train_record.__dict__
