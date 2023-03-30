@@ -27,6 +27,13 @@ services:
       PREFECT_API_URL: http://localhost:4200/api
     depends_on:
       - pgdatabase
+    volumes:
+      # - "./flows:/opt/prefect/flows"
+      - "./data/prefect_data:/opt/prefect/data"
+      - "./resources:/opt/resources"
+      - "./utilities:/opt/utilities"
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   prefect-agent:
@@ -51,10 +58,12 @@ services:
     volumes:
       - "./flows:/opt/prefect/flows"
       - "./data/prefect_data:/opt/prefect/data"
-      - "./prefect_deployments:/opt/prefect/deployments"
+      - "./blocks:/opt/prefect/blocks"
       - "./resources:/opt/resources"
       - "./utilities:/opt/utilities"
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   pgdatabase:
@@ -70,6 +79,8 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "5433:5432"
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   pgadmin:
@@ -83,6 +94,8 @@ services:
       - "8090:80"
     volumes:
       - "./data/pgadmin_data:/var/lib/pgadmin"
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   datafeeder:
@@ -113,6 +126,8 @@ services:
       # - "${DOCKER_HOST_IP}:8000:8000"
       - "127.0.0.1:8084:80"
       - "127.0.0.1:8000:8000"
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   zookeeper:
@@ -129,6 +144,8 @@ services:
        ALLOW_ANONYMOUS_LOGIN: yes
        ZOOKEEPER_CLIENT_PORT: 2181
        ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   broker:
@@ -156,6 +173,8 @@ services:
     depends_on:
       - zookeeper
     restart: always
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -178,6 +197,8 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
       SCHEMA_REGISTRY_DEBUG: true
     restart: on-failure
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   control-center:
@@ -199,22 +220,25 @@ services:
       CONTROL_CENTER_MONITORING_INTERCEPTOR_TOPIC_PARTITIONS: 1
       CONFLUENT_METRICS_TOPIC_REPLICATION: 1
       PORT: 9021
-
-  kafka-rest:
-    image: confluentinc/cp-kafka-rest:7.2.0
-    hostname: kafka-rest
-    container_name: kafka-rest
-    ports:
-      - "8082:8082"
-    depends_on:
-      - schema-registry
-      - broker
-    environment:
-      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
-      KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://localhost:8081'
-      KAFKA_REST_HOST_NAME: localhost
-      KAFKA_REST_LISTENERS: 'http://0.0.0.0:8082'
+    networks:
+      - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  # kafka-rest:
+  #   image: confluentinc/cp-kafka-rest:7.2.0
+  #   hostname: kafka-rest
+  #   container_name: kafka-rest
+  #   ports:
+  #     - "8082:8082"
+  #   depends_on:
+  #     - schema-registry
+  #     - broker
+  #   environment:
+  #     KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
+  #     KAFKA_REST_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+  #     KAFKA_REST_SCHEMA_REGISTRY_URL: 'http://localhost:8081'
+  #     KAFKA_REST_HOST_NAME: localhost
+  #     KAFKA_REST_LISTENERS: 'http://0.0.0.0:8082'
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
   dbt-bq-train:
@@ -231,6 +255,10 @@ services:
       - ./dbt-bq-train:/usr/app/dbt
       - ./profile-yml/:/root/.dbt
       - ~/.config/gcloud/dtc-de-project-380810-af97d0ef23ad.json:/.google/credentials/google_credentials.json
+    networks:
+      - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   dataviz:
     image: metabase/metabase
     container_name: metabase
@@ -260,5 +288,11 @@ services:
       - ./scheduler.conf:/etc/ofelia.conf
       - ./data/ofelia_logs/scheduler:/etc/logs
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
+networks:
+  dtc-network:
+    driver: bridge
+    name: dtc-network
