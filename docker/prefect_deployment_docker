@@ -1,0 +1,17 @@
+FROM prefecthq/prefect:2.8.7-python3.9 as base
+
+FROM base as agent
+
+COPY flows/requirements.txt .
+
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt --trusted-host pypi.python.org
+
+
+COPY flows /opt/prefect/flows
+COPY data/prefect_data /opt/prefect/data
+COPY resources /opt/resources    
+COPY utilities /opt/utilities
+COPY blocks /opt/prefect/blocks
+
+WORKDIR /opt/prefect
