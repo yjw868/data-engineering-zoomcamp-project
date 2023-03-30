@@ -1,0 +1,11 @@
+{
+  "namespace": "com.dtc-de-project.train",
+  "type": "record",
+  "name": "TrainRecordKey",
+  "fields": [
+    {
+      "name": "train_id",
+      "type": "string"
+    }
+  ]
+}

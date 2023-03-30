@@ -1,11 +1,46 @@
 {
+  "namespace": "com.dtc-de-project.train",
+  "type": "record",
+  "name": "TrainRecordKey",
   "fields": [
+    {
+      "default": null,
+      "name": "event_type",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "default": null,
+      "name": "gbtt_timestamp",
+      "type": [
+        "null",
+        "long"
+      ]
+    },
+    {
+      "default": null,
+      "name": "original_loc_stanox",
+      "type": [
+        "null",
+        "long"
+      ]
+    },
+    {
+      "default": null,
+      "name": "planned_timestamp",
+      "type": [
+        "null",
+        "long"
+      ]
+    },
     {
       "default": null,
       "name": "actual_timestamp",
       "type": [
         "null",
-         "int"
+         "long"
       ]
     },
     {
@@ -53,7 +88,7 @@
       "name": "division_code",
       "type": [
         "null",
-         "int"
+         "long"
       ]
     },
     {
@@ -64,22 +99,7 @@
         "string"
       ]
     },
-    {
-      "default": null,
-      "name": "event_type",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
-    {
-      "default": null,
-      "name": "gbtt_timestamp",
-      "type": [
-        "null",
-        "int"
-      ]
-    },
+
     {
       "default": null,
       "name": "line_ind",
@@ -93,7 +113,7 @@
       "name": "loc_stanox",
       "type": [
         "null",
-        "int"
+        "long"
       ]
     },
     {
@@ -101,7 +121,7 @@
       "name": "next_report_run_time",
       "type": [
         "null",
-        "int"
+        "long"
       ]
     },
     {
@@ -109,7 +129,7 @@
       "name": "next_report_stanox",
       "type": [
         "null",
-        "int" 
+        "long" 
       ]
     },
     {
@@ -120,20 +140,13 @@
         "string"
       ]
     },
-    {
-      "default": null,
-      "name": "original_loc_stanox",
-      "type": [
-        "null",
-        "string"
-      ]
-    },
+
     {
       "default": null,
       "name": "original_loc_timestamp",
       "type": [
         "null",
-        "string"
+        "long"
       ]
     },
     {
@@ -144,14 +157,7 @@
         "string"
       ]
     },
-    {
-      "default": null,
-      "name": "planned_timestamp",
-      "type": [
-        "null",
-        "int"
-      ]
-    },
+
     {
       "default": null,
       "name": "platform",
@@ -165,7 +171,7 @@
       "name": "reporting_stanox",
       "type": [
         "null",
-        "int"
+        "long"
       ]
     },
     {
@@ -181,7 +187,7 @@
       "name": "timetable_variation",
       "type": [
         "null",
-        "int" 
+        "long" 
       ]
     },
     {
@@ -189,7 +195,7 @@
       "name": "toc_id",
       "type": [
         "null",
-        "int"
+        "long"
       ]
     },
     {
@@ -213,7 +219,7 @@
       "name": "train_service_code",
       "type": [
         "null",
-        "int"
+        "long"
       ]
     },
     {
@@ -232,8 +238,5 @@
         "string"
       ]
     }
-  ],
-  "name": "value_TRAIN_MVT_ALL_TO",
-  "namespace": "TRAIN_MVT_ALL_TOC",
-  "type": "record"
+  ]
 }

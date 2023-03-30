@@ -44,6 +44,7 @@ services:
       - orion
       - zookeeper
       - broker
+      - schema-registry
     environment:
       <<: *default-app-vars
       PREFECT_API_URL: http://host.docker.internal:4200/api
@@ -51,6 +52,8 @@ services:
       - "./flows:/opt/prefect/flows"
       - "./data/prefect_data:/opt/prefect/data"
       - "./prefect_deployments:/opt/prefect/deployments"
+      - "./resources:/opt/resources"
+      - "./utilities:/opt/utilities"
       - /var/run/docker.sock:/var/run/docker.sock
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -101,6 +104,8 @@ services:
       SCHEMA_REGISTRY_SERVER_PORT: 8081
     volumes:
       - ./ingest:/opt/datafeeder/
+      - ./resources:/opt/resources/
+      - ./utilities:/opt/utilities
       - ./data/tmp:/tmp/
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
