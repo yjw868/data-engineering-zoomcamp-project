@@ -286,7 +286,7 @@ services:
     command: daemon --config=/etc/ofelia.conf
     volumes:
       - ./scheduler.conf:/etc/ofelia.conf
-      - ./data/ofelia_logs/scheduler:/etc/logs
+      - ./data/ofelia_scheduler_logs:/etc/logs
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dtc-network
