@@ -199,7 +199,7 @@ data/kafka_data/*
 /data/db_data/*
 /data/prefect_data/*
 /data/pgadmin_data/*
-data/ofelia_scheduler_logs/
+data/ofelia_scheduler_logs/*
 
 # Include data folder structure
 # !/data/.gitkeep
