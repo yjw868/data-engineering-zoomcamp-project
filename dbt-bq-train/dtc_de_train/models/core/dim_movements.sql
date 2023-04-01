@@ -47,7 +47,10 @@ with
     final as (
         select t.*, r.description as original_loc, loc.description as loc
         from transformation t
-        left join rail_loc_code r on t.original_loc_stanox = r.stannox
+        left join
+            rail_loc_code r
+            on t.original_loc_stanox = r.stannox
+            and t.original_loc_stanox <> 0
         left join rail_loc_code loc on t.loc_stanox = loc.stannox
     )
 select *
