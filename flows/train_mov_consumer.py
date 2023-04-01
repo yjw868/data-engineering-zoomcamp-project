@@ -20,7 +20,7 @@ from train_record_key import dict_to_train_record_key
 loc = Path(__file__).parents[1] / "data"
 
 TIMEZONE_LONDON: timezone = timezone("Europe/London")
-GCS_BUCKET = gcs_block = GcsBucket.load("dtc-de-project")
+GCS_BUCKET = GcsBucket.load("dtc-de-project")
 GCS_PATH = "train_mov"
 
 
