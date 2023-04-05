@@ -1,8 +1,11 @@
+# DataTalksClub's Data Engineering Zoomcamp Project
+## UK NetworkRail Operator performance Analysis
 
-
-
+This is the final project as a part of the [Data Engineering Zoomcamp](https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/main/README.md) course.
+It includes an end-to-end data pipeline that streams train movement data along with a very basic analysis of their performance.
 ## Architecture diagram
-<img src="assets/dtc-de-project architechture.png"/>
+<img src="assets/dtc-de-project architecture.png" />
+
 
 ## Problem description
 
@@ -87,6 +90,9 @@ There are roughly two full days of data in the data sets. A total of 13,479 reco
 - [Train Movement wiki](https://wiki.openraildata.com/index.php?title=Train_Movement)
 
 ### Credits
+
+This project would not have been possible without the DataTalksClub team behind these courses and all the members who helped me along the way.
+
 - [On Track with Apache Kafka – Building a Streaming ETL Solution with Rail Data](https://www.confluent.io/en-gb/blog/build-streaming-etl-solutions-with-kafka-and-rail-data/)
 - [KaitaiD / py-network-rail-feeder](https://github.com/KaitaiD/py-network-rail-feeder)
 - [zkan / dtc-data-engineering-zoomcamp-project](https://github.com/zkan/dtc-data-engineering-zoomcamp-project)
