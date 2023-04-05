@@ -126,10 +126,10 @@ def list_files_to_ingest(gcs_block):
 def etl_gcs_to_bq():
     gcs_block = GcsBucket.load("dtc-de-project")
     files_to_ingest = list_files_to_ingest(gcs_block)
-    print("New files to ingest")
     print(files_to_ingest)
 
     if len(files_to_ingest) > 0:
+        print("New files to ingest")
         for file in files_to_ingest:
             path = file.replace("data/", "")
             try:

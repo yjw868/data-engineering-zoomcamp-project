@@ -1,0 +1,7 @@
+altair==4.2.2
+pyarrow==11.0.0
+pandas==1.5.3
+streamlit==1.20.0
+google-cloud-bigquery==3.9.0
+google-cloud==0.34.0
+protobuf==3.19.5

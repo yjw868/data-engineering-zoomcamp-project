@@ -1,5 +1,6 @@
 # https://github.com/DataTalksClub/data-engineering-zoomcamp/blob/3e7dfb6857db2dda857199d4e3107e12f2893473/week_6_stream_processing/python/docker/kafka/docker-compose.yml
 version: '3.6'
+name: data-engineering-zoomcamp-project
 x-build:
   &default-build
   context: .
@@ -67,7 +68,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   pgdatabase:
-    image: ubuntu/postgres:latest
+    image: postgres:14.7-alpine
     container_name: pgdatabase
     environment:
       - POSTGRES_USER=root
@@ -115,12 +116,14 @@ services:
       SCHEMA_REGISTRY_URL: http://schema-registry:8081
       # SCHEMA_REGISTRY_SERVER: schema-registry
       SCHEMA_REGISTRY_SERVER_PORT: 8081
+    restart: on-failure
     volumes:
       - ./ingest:/opt/datafeeder/
       - ./resources:/opt/resources/
       - ./utilities:/opt/utilities
       - ./data/tmp:/tmp/
       - /var/run/docker.sock:/var/run/docker.sock
+    entrypoint: ["/bin/sh","-c", "/opt/datafeeder/entrypoint.sh"]
     ports:
       # - "${DOCKER_HOST_IP}:8084:80"
       # - "${DOCKER_HOST_IP}:8000:8000"
@@ -260,7 +263,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
   dataviz:
-    image: metabase/metabase
+    image: metabase/metabase:v0.45.3
     container_name: metabase
     restart: always
     environment:
@@ -277,6 +280,8 @@ services:
       - "./data/dataviz_data:/metabase-data"
     ports:
       - "3000:3000"
+    networks:
+      - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
   ofelia_scheduler:
@@ -292,6 +297,25 @@ services:
       - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  streamlit:
+    build:
+      context: .
+      dockerfile: ./docker/streamlit_docker
+    container_name: streamlit
+    ports:
+      - 8501:8501
+    entrypoint: ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    volumes:
+      - ./streamlit_app:/streamlit_app
+      # - ${PWD}/secrets.toml:/streamlist_app/.streamlit/secrets.toml
+    # profiles:
+    #   - streamlit
+    networks:
+      - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
 networks:
   dtc-network:
     driver: bridge

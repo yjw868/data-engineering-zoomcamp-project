@@ -3,6 +3,8 @@
 with
     movements as (select * from {{ ref("stg_movements") }}),
     rail_loc_code as (select * from {{ ref("stg_rail_loc_code") }}),
+    toc as (select * from {{ ref("stg_toc") }}),
+    stanox_location as (select * from {{ ref("stg_stanox_location") }}),
     transformation as (
         select
             event_type,
@@ -45,10 +47,21 @@ with
         from movements
     ),
     final as (
-        select t.*, r.description as original_loc, loc.description as loc
+        select
+            t.*,
+            r.description as original_loc,
+            loc.description as loc,
+            ifnull(toc.company_name, "unmapped") as company_name,
+            s.latitude as latitude,
+            s.longitude as longitude
         from transformation t
-        left join rail_loc_code r on t.original_loc_stanox = r.stannox
+        left join
+            rail_loc_code r
+            on t.original_loc_stanox = r.stannox
+            and t.original_loc_stanox <> 0
         left join rail_loc_code loc on t.loc_stanox = loc.stannox
+        left join toc on t.toc_id = toc.toc and t.toc_id <> 0
+        left join stanox_location s on s.stanox = t.loc_stanox
     )
 select *
 from final

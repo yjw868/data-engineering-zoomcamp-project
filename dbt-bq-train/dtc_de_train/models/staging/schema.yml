@@ -9,85 +9,156 @@ sources:
       # database: production
 
       schema: ext_train
-
       # loaded_at_field: record_loaded_at
       tables:
         - name: movements
+          description: A train movement message is sent whenever a train arrives, passes or departs a location monitored by TRUST. It records the time at which the event happens.
+          columns:
+            - name: event_type
+              description: The type of event - either "ARRIVAL" or "DEPARTURE"
+            - name: gbtt_timestamp
+              description: The planned GBTT (passenger) date and time that the event was due to happen at this location
+            - name: original_loc_stanox
+              description: If the location has been revised, the STANOX of the location in the schedule at activation time
+            - name: planned_timestamp
+              description: The planned date and time that this event was due to happen at this location
+            - name: timetable_variation
+              description: The number of minutes variation from the scheduled time at this location. Off-route reports will contain "0"
+            - name: original_loc_timestamp
+              description: The planned time associated with the original location
+            - name: current_train_id
+              description: Where a train has had its identity changed, the current 10-character unique identity for this train
+            - name: delay_monitoring_point
+              description: Set to "true" if this is a delay monitoring point, "false" if it is not. Off-route reports will contain "false"
+            - name: next_report_run_time
+              description: The running time to the next location
+            - name: reporting_stanox
+              description: The STANOX of the location that generated this report. Set to "00000" for manual and off-route reports
+            - name: actual_timestamp
+              description: The date and time that this event happened at the location
+            - name: correction_ind
+              description: Set to "false" if this report is not a correction of a previous report, or "true" if it is
+            - name: event_source
+              description: Whether the event source was "AUTOMATIC" from SMART, or "MANUAL" from TOPS or TRUST SDR
+            - name: train_file_address
+              description: The TOPS train file address, if applicable
+            - name: platform
+              description: Two characters (including a space for a single character) or blank if the movement report is associated with a platform number
+            - name: division_code
+              description: Operating company ID as per TOC Codes
+            - name: train_terminated
+              description: Set to "true" if the train has completed its journey, or "false" otherwise
+            - name: train_id
+              description: The 10-character unique identity for this train at TRUST activation time
+            - name: offroute_ind
+              description: Set to "false" if this report is for a location in the schedule, or "true" if it is not
+            - name: variation_status
+              description: One of "ON TIME", "EARLY", "LATE" or "OFF ROUTE"
+            - name: train_service_code
+              description: Train service code as per schedule
+            - name: toc_id
+              description: Operating company ID as per TOC Codes
+            - name: loc_stanox
+              description: The STANOX of the location at which this event happened
+            - name: auto_expected
+              description: Set to "true" if an automatic report is expected for this location, otherwise "false"
+            - name: direction_ind
+              description: For automatic reports, either "UP" or "DOWN" depending on the direction of travel 
+            - name: route
+              description: A single character (or blank) to indicate the exit route from this location
+            - name: planned_event_type
+              description: The planned type of event - one of "ARRIVAL", "DEPARTURE" or "DESTINATION"
+            - name: next_report_stanox
+              description: The STANOX of the location at which the next report for this train is due
+            - name: line_ind
+              description: A single character (or blank) depending on the line the train is travelling on, e.g. F = Fast, S = Slow
         - name: rail_loc_code
 
          # freshness:
            # error_after: {count: 6, period: hour}
+    - name: seeding
+      database: dtc-de-project-380810 
+      schema: train_seed_data
+      tables:
+        - name: toc
+        - name: ukrail_locations
+
 
 models:
     - name: stg_movements
-#       description: >÷
-#         Trip made by green taxis, also known as boro taxis and street-hail liveries.
-#         Green taxis may respond to street hails,but only in the areas indicated in green on the
-#         map (i.e. above W 110 St/E 96th St in Manhattan and in the boroughs).
-#         The records were collected and provided to the NYC Taxi and Limousine Commission (TLC) by
-#         technology service providers. 
-#       columns:
-#           - name: tripid
-#             description: Primary key for this table, generated with a concatenation of vendorid+pickup_datetime
-#             tests:
-#                 - unique:
-#                     severity: warn
-#                 - not_null:
-#                     severity: warn
-#           - name: VendorID 
-#             description: > 
-#                 A code indicating the TPEP provider that provided the record.
-#                 1= Creative Mobile Technologies, LLC; 
-#                 2= VeriFone Inc.
-#           - name: pickup_datetime 
-#             description: The date and time when the meter was engaged.
-#           - name: dropoff_datetime 
-#             description: The date and time when the meter was disengaged.
-#           - name: Passenger_count 
-#             description: The number of passengers in the vehicle. This is a driver-entered value.
-#           - name: Trip_distance 
-#             description: The elapsed trip distance in miles reported by the taximeter.
-#           - name: Pickup_locationid
-#             description: locationid where the meter was engaged.
-#             tests:
-#               - relationships:
-#                   to: ref('taxi_zone_lookup')
-#                   field: locationid
-#                   severity: warn
-#           - name: dropoff_locationid 
-#             description: locationid where the meter was engaged.
-#             tests:
-#               - relationships:
-#                   to: ref('taxi_zone_lookup')
-#                   field: locationid
-#           - name: RateCodeID 
-#             description: >
-#                 The final rate code in effect at the end of the trip.
-#                   1= Standard rate
-#                   2=JFK
-#                   3=Newark
-#                   4=Nassau or Westchester
-#                   5=Negotiated fare
-#                   6=Group ride
-#           - name: Store_and_fwd_flag 
-#             description: > 
-#               This flag indicates whether the trip record was held in vehicle
-#               memory before sending to the vendor, aka “store and forward,”
-#               because the vehicle did not have a connection to the server.
-#                 Y= store and forward trip
-#                 N= not a store and forward trip
-#           - name: Dropoff_longitude 
-#             description: Longitude where the meter was disengaged.
-#           - name: Dropoff_latitude 
-#             description: Latitude where the meter was disengaged.
-#           - name: Payment_type 
-#             description: >
-#               A numeric code signifying how the passenger paid for the trip.
-#             tests: 
-#               - accepted_values:
-#                   values: "{{ var('payment_type_values') }}"
-#                   severity: warn
-#                   quote: false
+      columns:
+        - name: event_type
+          description: The type of event - either "ARRIVAL" or "DEPARTURE"
+          tests:
+            - not_null
+            - accepted_values:
+                values:
+                  - "ARRIVAL"
+                  - "DEPARTURE"
+        - name: gbtt_timestamp
+          description: The planned GBTT (passenger) date and time that the event was due to happen at this location
+        - name: original_loc_stanox
+          description: If the location has been revised, the STANOX of the location in the schedule at activation time
+        - name: planned_timestamp
+          description: The planned date and time that this event was due to happen at this location
+        - name: timetable_variation
+          description: The number of minutes variation from the scheduled time at this location. Off-route reports will contain "0"
+        - name: original_loc_timestamp
+          description: The planned time associated with the original location
+        - name: current_train_id
+          description: Where a train has had its identity changed, the current 10-character unique identity for this train
+        - name: delay_monitoring_point
+          description: Set to "true" if this is a delay monitoring point, "false" if it is not. Off-route reports will contain "false"
+        - name: next_report_run_time
+          description: The running time to the next location
+        - name: reporting_stanox
+          description: The STANOX of the location that generated this report. Set to "00000" for manual and off-route reports
+        - name: actual_timestamp
+          description: The date and time that this event happened at the location
+        - name: correction_ind
+          description: Set to "false" if this report is not a correction of a previous report, or "true" if it is
+        - name: event_source
+          description: Whether the event source was "AUTOMATIC" from SMART, or "MANUAL" from TOPS or TRUST SDR
+        - name: train_file_address
+          description: The TOPS train file address, if applicable
+        - name: platform
+          description: Two characters (including a space for a single character) or blank if the movement report is associated with a platform number
+        - name: division_code
+          description: Operating company ID as per TOC Codes
+        - name: train_terminated
+          description: Set to "true" if the train has completed its journey, or "false" otherwise
+        - name: train_id
+          description: The 10-character unique identity for this train at TRUST activation time
+        - name: offroute_ind
+          description: Set to "false" if this report is for a location in the schedule, or "true" if it is not
+        - name: variation_status
+          description: One of "ON TIME", "EARLY", "LATE" or "OFF ROUTE"
+          tests:
+            - not_null
+            - accepted_values:
+                values:
+                  - "ON TIME"
+                  - "EARLY"
+                  - "LATE"
+                  - "OFF ROUTE"
+        - name: train_service_code
+          description: Train service code as per schedule
+        - name: toc_id
+          description: Operating company ID as per TOC Codes
+        - name: loc_stanox
+          description: The STANOX of the location at which this event happened
+        - name: auto_expected
+          description: Set to "true" if an automatic report is expected for this location, otherwise "false"
+        - name: direction_ind
+          description: For automatic reports, either "UP" or "DOWN" depending on the direction of travel 
+        - name: route
+          description: A single character (or blank) to indicate the exit route from this location
+        - name: planned_event_type
+          description: The planned type of event - one of "ARRIVAL", "DEPARTURE" or "DESTINATION"
+        - name: next_report_stanox
+          description: The STANOX of the location at which the next report for this train is due
+        - name: line_ind
+          description: A single character (or blank) depending on the line the train is travelling on, e.g. F = Fast, S = Slow
     - name: stg_rail_loc_code
       description: >
         Railway Location Codes

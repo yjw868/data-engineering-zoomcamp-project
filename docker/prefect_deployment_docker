@@ -9,7 +9,7 @@ RUN pip install --upgrade pip && \
 
 
 COPY flows /opt/prefect/flows
-COPY data/prefect_data /opt/prefect/data
+# COPY data/prefect_data /opt/prefect/data
 COPY resources /opt/resources    
 COPY utilities /opt/utilities
 COPY blocks /opt/prefect/blocks

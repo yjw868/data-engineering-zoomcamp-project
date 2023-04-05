@@ -20,8 +20,8 @@ from train_record_key import dict_to_train_record_key
 loc = Path(__file__).parents[1] / "data"
 
 TIMEZONE_LONDON: timezone = timezone("Europe/London")
-GCS_BUCKET = gcs_block = GcsBucket.load("dtc-de-project")
-GCS_PATH = "trani_mov"
+GCS_BUCKET = GcsBucket.load("dtc-de-project")
+GCS_PATH = "train_mov"
 
 
 class TrainAvroConsumer:
@@ -92,7 +92,7 @@ class TrainAvroConsumer:
         buf = BytesIO(json.dumps([body]).encode("utf-8"))
         gcs_path = GCS_BUCKET.upload_from_file_object(
             buf,
-            f"{GCS_PATH}/{uk_datetime_str}-{toc_id}.json",
+            f"{GCS_PATH}/{toc_id}/{uk_datetime_str}-{toc_id}.json",
         )
         print(f"file written to {gcs_path}")
         return gcs_path

@@ -7,10 +7,8 @@ parent_directory = pathlib.Path(__file__).resolve().parents[2]
 sys.path.append(str(parent_directory / "utilities"))
 
 from prefect import flow, task
-from prefect_gcp.cloud_storage import GcsBucket
 from settings import (
     BOOTSTRAP_SERVERS,
-    KAFKA_TOPIC,
     SCHEMA_REGISTRY_URL,
     TRAIN_KEY_SCHEMA_PATH,
     TRAIN_VALUE_SCHEMA_PATH,
