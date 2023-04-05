@@ -41,6 +41,7 @@ Using this simple analysis, you can see how each train operator performs based o
         <img src="assets/dbt lineage graph.png"/>
 - ofelia scheduler: A [scheduler](https://github.com/mcuadros/ofelia) to run cronjob from a running docker. It is used to run dbt
     <img src="assets/ofelia cron syntax.png" />
+
     ```
     [global]
     save-folder = /etc/logs
