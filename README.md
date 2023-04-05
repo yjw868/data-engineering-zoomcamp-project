@@ -54,7 +54,7 @@ Using this simple analysis, you can see how each train operator performs based o
     command = dbt run
     ```
 
-    <img src="assets/Ofelia.png" />
+   <img src="assets/Ofelia.png" />
 
 - resources: This includes the Avro schemas which will be shared in the Prefect-Agent and datafeeder docker containers
 
