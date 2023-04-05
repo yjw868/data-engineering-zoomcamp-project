@@ -1,8 +1,11 @@
 import json
 import sys
 from datetime import datetime
+from io import BytesIO
 from pathlib import Path
 from typing import Dict, List
+
+from prefect_gcp.cloud_storage import GcsBucket
 
 parent_directory = Path(__file__).resolve().parents[2]
 sys.path.append(str(parent_directory / "utilities"))
@@ -10,21 +13,15 @@ from confluent_kafka import Consumer
 from confluent_kafka.schema_registry import SchemaRegistryClient
 from confluent_kafka.schema_registry.avro import AvroDeserializer
 from confluent_kafka.serialization import MessageField, SerializationContext
-from kafka import TopicPartition
 from pytz import timezone
-from settings import (
-    BOOTSTRAP_SERVERS,
-    KAFKA_TOPIC,
-    SCHEMA_REGISTRY_URL,
-    TRAIN_KEY_SCHEMA_PATH,
-    TRAIN_VALUE_SCHEMA_PATH,
-)
 from train_record import dict_to_train_record, train_record_to_dict
 from train_record_key import dict_to_train_record_key
 
 loc = Path(__file__).parents[1] / "data"
 
 TIMEZONE_LONDON: timezone = timezone("Europe/London")
+GCS_BUCKET = gcs_block = GcsBucket.load("dtc-de-project")
+GCS_PATH = "trani_mov"
 
 
 class TrainAvroConsumer:
@@ -79,12 +76,26 @@ class TrainAvroConsumer:
                     body = train_record_to_dict(record)
                     results.append(body)
                     uk_datetime_str, toc_id = self.parse_msg(body)
-                    self.write_local(loc, body, uk_datetime_str, toc_id)
+
+                    # Write to local
+                    # self.write_local(loc, body, uk_datetime_str, toc_id)
+
+                    # Write to gcs
+                    self.write_msg_to_gcs(body, uk_datetime_str, toc_id)
             except KeyboardInterrupt:
                 break
 
         self.consumer.close()
         return results
+
+    def write_msg_to_gcs(self, body, uk_datetime_str, toc_id):
+        buf = BytesIO(json.dumps([body]).encode("utf-8"))
+        gcs_path = GCS_BUCKET.upload_from_file_object(
+            buf,
+            f"{GCS_PATH}/{uk_datetime_str}-{toc_id}.json",
+        )
+        print(f"file written to {gcs_path}")
+        return gcs_path
 
     def parse_msg(self, message):
         timestamp = int(message["actual_timestamp"]) / 1000

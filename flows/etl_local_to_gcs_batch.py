@@ -26,7 +26,7 @@ def write_gcs(path: Path) -> None:
 
 
 @flow()
-def main():
+def etl_local_to_gcs():
     p = Path(loc).glob("*.json")
     files = [x for x in p if x.is_file()]
     with open("./data/processed_files.pkl", "rb") as f:
@@ -48,4 +48,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    etl_local_to_gcs()
