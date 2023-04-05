@@ -297,6 +297,25 @@ services:
       - dtc-network
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  streamlit:
+    build:
+      context: .
+      dockerfile: ./docker/streamlit_docker
+    container_name: streamlit
+    ports:
+      - 8501:8501
+    entrypoint: ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    volumes:
+      - ./streamlit_app:/streamlit_app
+      # - ${PWD}/secrets.toml:/streamlist_app/.streamlit/secrets.toml
+    # profiles:
+    #   - streamlit
+    networks:
+      - dtc-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+
 networks:
   dtc-network:
     driver: bridge
