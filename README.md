@@ -40,18 +40,8 @@ Using this simple analysis, you can see how each train operator performs based o
 - dbt-bq-train: Transformation using the dbt Core with BigQuery
         <img src="assets/dbt lineage graph.png"/>
 - ofelia scheduler: A [scheduler](https://github.com/mcuadros/ofelia) to run cronjob from a running docker. It is used to run dbt
+    <img src="assets/ofelia cron syntax.png" />
     ```
-    # Ofelia use go crontab format, not the standard one
-    # https://pkg.go.dev/github.com/robfig/cron
-    # Field name   | Mandatory? | Allowed values  | Allowed special characters
-    # ----------   | ---------- | --------------  | --------------------------
-    # Seconds      | Yes        | 0-59            | * / , -
-    # Minutes      | Yes        | 0-59            | * / , -
-    # Hours        | Yes        | 0-23            | * / , -
-    # Day of month | Yes        | 1-31            | * / , - ?
-    # Month        | Yes        | 1-12 or JAN-DEC | * / , -
-    # Day of week  | Yes        | 0-6 or SUN-SAT  | * / , - ?
-
     [global]
     save-folder = /etc/logs
 
@@ -62,6 +52,7 @@ Using this simple analysis, you can see how each train operator performs based o
     container = dbt-bq-train
     command = dbt run
     ```
+
     <img src="assets/Ofelia.png" />
 
 - resources: This includes the Avro schemas which will be shared in the Prefect-Agent and datafeeder docker containers
