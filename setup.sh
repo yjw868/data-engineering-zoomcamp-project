@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [ ! -f "secrect.toml" ]; then
     echo "Create secrect.toml. Remember to update it with your detail. \n
         Go to https://publicdatafeeds.networkrail.co.uk/ntrod/create-account to create your own account"

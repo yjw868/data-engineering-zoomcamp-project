@@ -59,6 +59,10 @@ Using this simple analysis, you can see how each train operator performs based o
 - resources: This includes the Avro schemas which will be shared in the Prefect-Agent and datafeeder docker containers
 
 - utilities: This includes the Kafka producer settings and TrainRecord Class
+
+- streamlit_app: This give the ability to view the [simple dashboard](http://localhost:8501/) straight away after runing `make start`.
+
+- terraform_gcp: This includes all the scripts to setup the Google Cloud Storage and BigQuery.
 ## Results
 <img src="assets/Network Rail Operator performance.png" />
 <img src="assets/bashboard1.png" />
@@ -66,11 +70,20 @@ Using this simple analysis, you can see how each train operator performs based o
 <img src="assets/dashboard4.png" />
 <img src="assets/dashboard2.png" />
 
+### Stermlit simple dashboard
+
+ As I couldn't figure out how to allow others to replicate the charts in Metadata, below is a streamlit version of the dashboard.You view this at [http://localhost:8501/](http://localhost:8501/) after you run `make start'. It is due to the time difference when I extracted the data that there is a discrepancy between this and above.
+<img src="assets/streamlit.png" />
 ### Conclusion
 
 There are roughly two full days of data in the data sets. A total of 13,479 records were captured, of which 34% are late, 36% are early, 28% are on time, and the rest are off route. West Coast Railways and DC Rail have the highest percentage of delays with more than 50% of trains running late.
 
-### Inprovements
+
+### To replicate
+
+Please see the detail instruction in [setup.md](setup.md)
+
+### Improvements
 
 - Create a Prefect deployment to run dbt core
 - Create a CI/CD with Github actions
