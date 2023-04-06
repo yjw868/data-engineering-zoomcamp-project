@@ -1,31 +1,3 @@
-# bq-dbt-train:
-#   outputs:
-#     dev:
-#       dataset: train
-#       fixed_retries: 1
-#       keyfile: /.google/credentials/google_credentials.json
-#       location: europe-west2
-#       method: service-account
-#       priority: interactive
-#       project: dtc-de-project-380810
-#       threads: 4
-#       timeout_seconds: 300
-#       type: bigquery
-#   target: dev
-# dbt_bq_train:
-#   outputs:
-#     dev:
-#       dataset: ext_train
-#       job_execution_timeout_seconds: 300
-#       job_retries: 1
-#       keyfile: /.google/credentials/google_credentials.json
-#       location: EU
-#       method: service-account
-#       priority: interactive
-#       project: dtc-de-project-380810
-#       threads: 4
-#       type: bigquery
-#   target: dev
 dtc_de_train:
   outputs:
     dev:
